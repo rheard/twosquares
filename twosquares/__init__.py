@@ -2,12 +2,12 @@ import math
 
 from functools import cache
 from itertools import product
-from typing import Optional, Set, Tuple, Union
+from typing import Optional, Union
 
 from complexint import complexint
 from sympy.ntheory import factorint
 
-def _euclids_algorithm(a: int, b: int, c: int) -> Optional[Tuple[int, int]]:
+def _euclids_algorithm(a: int, b: int, c: int) -> Optional[tuple[int, int]]:
     """Runs Euclid's algorithm and yields remainders"""
     first = None
     while a != 1:
@@ -25,7 +25,7 @@ def _euclids_algorithm(a: int, b: int, c: int) -> Optional[Tuple[int, int]]:
 
 
 @cache
-def decompose_prime(p: int) -> Tuple[int, int]:
+def decompose_prime(p: int) -> tuple[int, int]:
     """
     Decompose a prime number into a**2 + b**2
 
@@ -62,7 +62,7 @@ def decompose_prime(p: int) -> Tuple[int, int]:
 def decompose_number(n: Union[dict, int],
                      check_count: Optional[int] = None,
                      *,
-                     limited_checks: bool = False) -> Set[Tuple[int, int]]:
+                     limited_checks: bool = False) -> set[tuple[int, int]]:
     """
     Decompose any number into all the possible x**2 + y**2 solutions
 
@@ -133,7 +133,9 @@ def decompose_number(n: Union[dict, int],
 
     # Add the 2's power special case to the p_3_coefficients for later...
     p_3_coefficients *= complexint(1, -1) ** two_power
-    base_item = p_exp_decompositions[first_p][0]  # Base item only needs the positive value (a+bj) and doesn't need to vary
+
+    # Base item only needs the positive value (a+bj) and doesn't need to vary
+    base_item = p_exp_decompositions[first_p][0]
     base_item *= p_3_coefficients  # Add the previously calculated p_3 coefficients (including the 2's power)
     found = set()
     for choices in product([0, 1], repeat=sum(factors.values())):  # This will run ONCE if repeat=0

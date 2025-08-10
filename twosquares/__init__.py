@@ -5,7 +5,7 @@ from itertools import product
 from typing import Optional, Union
 
 from complexint import complexint
-from sympy.ntheory import factorint
+from sympy import factorint
 
 def _euclids_algorithm(a: int, b: int, c: int) -> Optional[tuple[int, int]]:
     """Runs Euclid's algorithm and yields remainders"""

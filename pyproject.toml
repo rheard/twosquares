@@ -2,8 +2,8 @@
 requires = [
     "mypy[mypyc]",
     "setuptools",
-    "sympy",
-    "complexint",
+    "sympy==1.11.1",
+    "complexint>=0.0.5",
 ]
 
 [project]

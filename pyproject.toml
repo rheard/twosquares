@@ -34,7 +34,7 @@ Repository = "https://github.com/rheard/twosquares"
 [tool.cibuildwheel]
 build = "cp3{9,10,11,12,13}-{win,macosx,manylinux}*"
 
-test-requires=["ruff", "pylint", "pytest"]
+test-requires=["ruff", "pylint", "pytest", "sympy==1.11.1", "complexint>=0.0.5"]
 test-command=[
     "python -m pytest {project}/tests",
     "ruff check",

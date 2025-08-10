@@ -2,12 +2,12 @@ import math
 
 from functools import cache
 from itertools import product
+from typing import Optional, Set, Tuple, Union
 
 from complexint import complexint
 from sympy.ntheory import factorint
 
-
-def _euclids_algorithm(a, b, c):
+def _euclids_algorithm(a: int, b: int, c: int) -> Optional[Tuple[int, int]]:
     """Runs Euclid's algorithm and yields remainders"""
     first = None
     while a != 1:
@@ -21,9 +21,11 @@ def _euclids_algorithm(a, b, c):
             return r, first
         first = r
 
+    raise ValueError("Euclid's algorithm failed")  # This will never be reached, for ruff
+
 
 @cache
-def decompose_prime(p):
+def decompose_prime(p: int) -> Tuple[int, int]:
     """
     Decompose a prime number into a**2 + b**2
 
@@ -54,8 +56,13 @@ def decompose_prime(p):
             if res:
                 return res
 
+    raise ValueError(f'Could not decompose {p!r}')
 
-def decompose_number(n, check_count=None, limited_checks=False) -> set[tuple[int, int]]:
+
+def decompose_number(n: Union[dict, int],
+                     check_count: Optional[int] = None,
+                     *,
+                     limited_checks: bool = False) -> Set[Tuple[int, int]]:
     """
     Decompose any number into all the possible x**2 + y**2 solutions
 
@@ -74,10 +81,7 @@ def decompose_number(n, check_count=None, limited_checks=False) -> set[tuple[int
     """
 
     # Step 1: Factor n. This is the most time consuming step, especially on larger numbers. Avoid if possible
-    if isinstance(n, dict):
-        factors = n
-    else:
-        factors = factorint(n)
+    factors = n if isinstance(n, dict) else factorint(n)
 
     # Look for shortcuts
     if len(factors) == 1 and sum(factors.values()) == 1:
@@ -92,7 +96,7 @@ def decompose_number(n, check_count=None, limited_checks=False) -> set[tuple[int
         return {decompose_prime(p)}
 
     # Divide the factors into the ones equivalent to 1 mod 4, and 3 mod 4:
-    p_1, p_3 = dict(), dict()
+    p_1, p_3 = {}, {}
     for p, k in factors.items():
         p_mod_4 = p % 4
         if p_mod_4 == 1:
@@ -123,12 +127,13 @@ def decompose_number(n, check_count=None, limited_checks=False) -> set[tuple[int
 
     p_decompositions = {p: decompose_prime(p) for p in factors}
     # Here we create the a+bj and a-bj pairs...
-    p_decompositions = {p: (complexint(*d), complexint(d[0], -d[1])) for p, d in p_decompositions.items()}
+    p_exp_decompositions = {p: (complexint(*d), complexint(d[0], -d[1])) for p, d in p_decompositions.items()}
     first_p = next(iter(factors))
     factors[first_p] -= 1  # subtract 1 for the base item
 
-    p_3_coefficients *= complexint(1, -1)**two_power  # Add the 2's power special case to the p_3_coefficients for later...
-    base_item = p_decompositions[first_p][0]  # Base item only needs the positive value (a+bj) and doesn't need to vary
+    # Add the 2's power special case to the p_3_coefficients for later...
+    p_3_coefficients *= complexint(1, -1) ** two_power
+    base_item = p_exp_decompositions[first_p][0]  # Base item only needs the positive value (a+bj) and doesn't need to vary
     base_item *= p_3_coefficients  # Add the previously calculated p_3 coefficients (including the 2's power)
     found = set()
     for choices in product([0, 1], repeat=sum(factors.values())):  # This will run ONCE if repeat=0
@@ -139,7 +144,7 @@ def decompose_number(n, check_count=None, limited_checks=False) -> set[tuple[int
             # Get a choice for each factor, on whether to use (a+bj) or (a-bj) here...
             for _ in range(k):
                 plus_or_minus = choices[choice_i]
-                total *= p_decompositions[p][plus_or_minus]
+                total *= p_exp_decompositions[p][plus_or_minus]
                 choice_i += 1
         sol = tuple(sorted((abs(total.real), abs(total.imag))))
         if sol[0] == sol[1]:

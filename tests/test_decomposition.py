@@ -1,9 +1,7 @@
 from pytest import raises
-
 from sympy import primerange
 
-from magic_sq import decompose_number, decompose_prime
-
+from twosquares import decompose_number, decompose_prime
 
 class TestPrimeDecomposition:
     """Tests for decompose_prime"""
@@ -20,7 +18,7 @@ class TestPrimeDecomposition:
 
     def test_invalid_prime(self):
         """Verify invalid primes"""
-        with raises(ValueError):
+        with raises(ValueError, match="Could not decompose"):
             decompose_prime(11)
 
     def test_high_range(self):

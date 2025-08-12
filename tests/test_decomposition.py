@@ -1,7 +1,17 @@
+from pathlib import Path
+
 from pytest import raises
 from sympy import primerange
 
+import twosquares
+
 from twosquares import decompose_number, decompose_prime
+
+def test_compiled_tests():
+    """Verify that we are running these tests with a compiled version of twosquares"""
+    path = Path(twosquares.__file__)
+    return path.suffix.lower() == '.pyd'
+
 
 class TestPrimeDecomposition:
     """Tests for decompose_prime"""

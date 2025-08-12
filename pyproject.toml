@@ -2,11 +2,6 @@
 requires = [
     "mypy[mypyc]",
     "setuptools",
-
-    # TODO: Sympy began adding mypy type-hints and removed the py.typed file.
-    #   It is actively being worked on, see https://github.com/sympy/sympy/issues/17945
-    "sympy<=1.12.1",
-    "complexint>=0.0.5",
 ]
 
 [project]
@@ -20,7 +15,6 @@ description = "A package for very efficiently decomposing a number n into all po
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.9"
 classifiers = [
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -30,6 +24,12 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
 ]
 keywords = ["math"]
+dependencies = [
+    # TODO: Sympy began adding mypy type-hints and removed the py.typed file.
+    #   It is actively being worked on, see https://github.com/sympy/sympy/issues/17945
+  "sympy<=1.12.1",
+  "complexint>=0.0.5",
+]
 
 [project.urls]
 Repository = "https://github.com/rheard/twosquares"
@@ -37,7 +37,7 @@ Repository = "https://github.com/rheard/twosquares"
 [tool.cibuildwheel]
 build = "cp3{9,10,11,12,13}-{win,macosx,manylinux}*"
 
-test-requires=["ruff", "pylint", "pytest", "sympy==1.12.1", "complexint>=0.0.5"]
+test-requires=["ruff", "pylint", "pytest"]
 test-command=[
     "python -m pytest {project}/tests",
     "ruff check {project}",

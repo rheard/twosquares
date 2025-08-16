@@ -81,7 +81,7 @@ def decompose_number(n: Union[dict, int],
     """
 
     # Step 1: Factor n. This is the most time consuming step, especially on larger numbers. Avoid if possible
-    factors = n if isinstance(n, dict) else factorint(n)
+    factors: dict[int, int] = n if isinstance(n, dict) else factorint(n)
 
     # Look for shortcuts
     if len(factors) == 1 and sum(factors.values()) == 1:
@@ -148,9 +148,11 @@ def decompose_number(n: Union[dict, int],
                 plus_or_minus = choices[choice_i]
                 total *= p_exp_decompositions[p][plus_or_minus]
                 choice_i += 1
-        sol = tuple(sorted((abs(total.real), abs(total.imag))))
+        sol: tuple[int, int] = abs(total.real), abs(total.imag)
         if sol[0] == sol[1]:
             continue  # Skip symmetrical solutions with repeat numbers (a**2 + a**2)
+        if sol[1] < sol[0]:
+            sol = (sol[1], sol[0])
         if any(x == 0 for x in sol):
             continue  # Skip solutions containing 0
         found.add(sol)

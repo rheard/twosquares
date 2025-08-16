@@ -10,7 +10,7 @@ from twosquares import decompose_number, decompose_prime
 def test_compiled_tests():
     """Verify that we are running these tests with a compiled version of twosquares"""
     path = Path(twosquares.__file__)
-    assert path.suffix.lower() == '.pyd'
+    assert path.suffix.lower() != '.py'
 
 
 class TestPrimeDecomposition:

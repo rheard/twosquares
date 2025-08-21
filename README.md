@@ -88,4 +88,22 @@ $17 = 1^2 + 4^2$
 
 4. Lastly it should be obvious: Multiply the base number by $2-3i$ and $1+4i$, we get our final answer: $19890 = 87^2 + 111^2$
 
-So in conclusion, all of the following are equal to $19890$: $69^2 + 123^2$, $129^2 + 57^2$, $3^2 + 141^2$, $87^2 + 111^2$
+So in conclusion, the following are all equal to $19890$: $69^2 + 123^2$, $129^2 + 57^2$, $3^2 + 141^2$, $87^2 + 111^2$
+
+Everything laid out in this example is performed by the following Python code:
+
+```python
+from twosquares import decompose_number
+
+print(decompose_number(19890))  # prints {(69, 123), (57, 129), (3, 141), (87, 111)} 
+```
+
+## Advanced Usage
+
+It is possible to skip the factoring step and instead build a factored dictionary and pass that to `decompose_number` instead. 
+    `decompose_number({2: 1, 3: 2, 5: 1, 13: 1, 17: 1})` will produce the same result as `decompose_number(19890)`.
+    If the factoring dictionary has been carefully crafted to comply with the rules laid out in step 1 of the algorithm section above,
+    then `limited_checks=True` can be passed as an argument to skip these validations.
+
+It is an interesting fact that the upper bound of solutions can be quickly computed by $\prod (j + 1)$.
+    If a minimum number of solutions is required, this can be quickly validated by passing `check_count` as an integer.

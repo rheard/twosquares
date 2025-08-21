@@ -149,11 +149,7 @@ def decompose_number(n: Union[dict, int],
                 total *= p_exp_decompositions[p][plus_or_minus]
                 choice_i += 1
         sol: tuple[int, int] = abs(total.real), abs(total.imag)
-        if sol[0] == sol[1]:
-            continue  # Skip symmetrical solutions with repeat numbers (a**2 + a**2)
         if sol[1] < sol[0]:
             sol = (sol[1], sol[0])
-        if any(x == 0 for x in sol):
-            continue  # Skip solutions containing 0
         found.add(sol)
     return found

@@ -14,7 +14,8 @@ Here is an explanation for the algorithm in this repo:
 This builds on the algorithm described by Stan Wagon (1990),
         based on work by Serret and Hermite (1848), and Cornacchia (1908).
 
-The first thing to know is that there is a deterministic algorithm to quickly find the 1 and only solution for primes $p$ that are $\equiv 1 \bmod 4$. The solution is to simply use Euclid's algorithm. This is the heart of the general algorithm for any $n$, which is described here:
+The first thing to know is that there is a deterministic algorithm to quickly find the 1 and only solution for primes $p$ that are $\equiv 1 \bmod 4$. 
+    The solution is to simply use Euclid's algorithm. This is the heart of the general algorithm for any $n$, which is described here:
 
 1. Factor $n$. This is the hardest, most time-consuming step. 
     We'll say this factoring has the form $2^t * (p_1 ^ {k_1} * p_2 ^ {k_2} * ...) * (q_1 ^ {j_1} * q_2 ^ {j_2} * ...)$
@@ -27,14 +28,18 @@ The first thing to know is that there is a deterministic algorithm to quickly fi
 
 3. Now, for each prime $q^j$ in the factoring (the ones $\equiv 3 \bmod 4$):
 
-   1. Multiply the base number by $(-qi)^{\max(\lfloor j / 2 \rfloor, 1)}$ Where $-qi$ is an imaginary number with $0$ real and $-q$ complex part, and it is raised to the power of $j / 2$ rounded down, and the `max` function just handles if $j$ is $1$ and rounds down to $0$.
+   1. Multiply the base number by $(-qi)^{ j / 2 }$ Where $-qi$ is an imaginary number with $0$ real and $-q$ complex part, and it is raised to the power of $j / 2$. 
+        Note that from the rules laid out in step 1 above, $j$ is guaranteed to be even so this will always be an integer.
 
-4. Next will begin the combinatorics for the $p$ group, however 1 member of the $p$ group does not need to engage in this combinatorics (reasons why below). So we'll select the first prime $p \equiv 3 \bmod 4$, and create it's "imaginary decomposition". This is a complex number $x+yi$ made from the solution $x^2 + y^2 = p$. Multiply the base number by this number too.
+4. Next will begin the combinatorics for the $p$ group, however 1 member of the $p$ group does not need to engage in this combinatorics (reasons why below). 
+       So we'll select the first prime $p \equiv 3 \bmod 4$, and create it's "imaginary decomposition". This is a complex number $x+yi$ made from the solution $x^2 + y^2 = p$. 
+       Multiply the base number by this number too.
 
    1. If the exponent for this $p$ (the $k$ value) was 1 then $p$ can be removed entirely from the group. 
    2. If $k$ was greater than $1$, it should be decremented, and the remaining instances of $p$ in the factorization still need to undergo the following combinatorics.
 
-5. Now we need to use combinations of (`True`, `False`) of length $\sum k$ to drive the combinatorics going forward. Python has a product method for this, or you can simply count up using binary numbers to `1<<sum(k)` and look at the bits of this counter. 
+5. Now we need to use combinations of (`True`, `False`) of length $\sum k$ to drive the combinatorics going forward. 
+       Python has a product method for this, or you can simply count up using binary numbers to `1<<sum(k)` and look at the bits of this counter. 
 
    For every possible combination of true/false called "choices":
    1. Start this solution with the base number.

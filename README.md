@@ -51,7 +51,7 @@ The first thing to know is that there is a deterministic algorithm to quickly fi
 
    3. The real and imaginary part of the total number now constitute a solution for $x^2 + y^2 = n$! Amazing!!
 
-      1. The numbers are then sorted so that $x<y$, and this is a unique solution that may or may not have been found already.
+      1. The numbers are then sorted so that $x<y$, and this is a solution that may or may not have been found already.
 
 Doing this we can rapidly break any number $n$ up into all of its possible $x^2 + y^2$ solutions!
 

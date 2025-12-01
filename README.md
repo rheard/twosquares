@@ -32,7 +32,7 @@ The first thing to know is that there is a deterministic algorithm to quickly fi
         Note that from the rules laid out in step 1 above, $j$ is guaranteed to be even so this will always be an integer.
 
 4. Next will begin the combinatorics for the $p$ group, however 1 member of the $p$ group does not need to engage in this combinatorics (reasons why below). 
-       So we'll select the first prime $p \equiv 3 \bmod 4$, and create it's "imaginary decomposition". This is a complex number $x+yi$ made from the solution $x^2 + y^2 = p$. 
+       So we'll select the first prime $p \equiv 1 \bmod 4$, and create it's "imaginary decomposition". This is a complex number $x+yi$ made from the solution $x^2 + y^2 = p$. 
        Multiply the base number by this number too.
 
    1. If the exponent for this $p$ (the $k$ value) was 1 then $p$ can be removed entirely from the group. 

@@ -71,11 +71,11 @@ Starting with the rules we can see that all of the primes $q$ have an even expon
 
 The 2's exponent is $1$, so we will say our base number is $(1-i)^1$ or just $1 - i$
 
-There is only a single prime in the $q$ group, so we will multiply the base number by $(-3i)^1$ which gives $-3 - 3i$
+There is only a single prime in the $q$ group, so we will multiply the base number by $(3i)^1$ which gives $3 + 3i$
 
 We'll take the first prime in the $p$ group ($5$) and decompose that number, we find we get $5 = 1^2 + 2^2$. 
     We use this composition to construct a complex number $1 + 2i$. Now multiply the base number by this. 
-    This is the real base number, which is $3 - 9i$
+    This is the real base number, which is $-3 + 9i$
 
 Now for combinatorics to produce all the different solutions. The remaining 2 primes $p$ have the following decompositions:
 
@@ -84,12 +84,12 @@ $13 = 2^2 + 3^2$
 $17 = 1^2 + 4^2$
 
 1. Using the positive values: Multiply the base number by $2+3i$ and $1+4i$ (from the solutions for both of these primes), 
-    and we get $69 + 123i$, which is magically our first solution: $19890 = 69^2 + 123^2$
+    and we get $-69 - 123i$, which using the absolute values of this is magically our first solution: $19890 = 69^2 + 123^2$
 
-2. Using the negative values: Multiply the base number by $2-3i$ and $1-4i$, and we get $-129 + 57i$, 
-   which using the absolute values of these gives our next solution: $19890 = 129^2 + 57^2$
+2. Using the negative values: Multiply the base number by $2-3i$ and $1-4i$, and we get $129 - 57i$, 
+    which gives our next solution: $19890 = 129^2 + 57^2$
 
-3. Using positive for 13 and negative for 17: Multiply the base number by $2+3i$ and $1-4i$, and we get $-3 - 141i$, which again gives our next solution: $19890 = 3^2 + 141^2$
+3. Using positive for 13 and negative for 17: Multiply the base number by $2+3i$ and $1-4i$, and we get $3 + 141i$, which again gives our next solution: $19890 = 3^2 + 141^2$
 
 4. Lastly it should be obvious: Multiply the base number by $2-3i$ and $1+4i$, we get our final answer: $19890 = 87^2 + 111^2$
 

@@ -121,9 +121,9 @@ def decompose_number(n: Union[dict, int],
     two_power = factors.get(2, 0)  # 2 is a special case. Get that exponent
     factors = p_1  # Convenience. These are the only factors we care about going forward...
 
-    # Handle the primes == 3 mod 4: For each one p^k, take -p*j ** max(k // 2, 1),
+    # Handle the primes == 3 mod 4: For each one p^k, take p*j ** max(k // 2, 1),
     #   then multiply that all together
-    p_3_coefficients = math.prod(complexint(imag=-p)**(k // 2) for p, k in p_3.items())
+    p_3_coefficients = math.prod(complexint(imag=p)**(k // 2) for p, k in p_3.items())
 
     p_decompositions = {p: decompose_prime(p) for p in factors}
     # Here we create the a+bj and a-bj pairs...

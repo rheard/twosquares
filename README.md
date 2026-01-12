@@ -46,7 +46,7 @@ The first thing to know is that there is a deterministic algorithm to quickly fi
    2. For each factor $p$ left, one time for each exponent $k$:
 
       1. Get the next "choice" (true/false)
-      2. Get the "imaginary decomposition" of the factor, either $x+yi$ if the choice was true or $x-yi$ if the choice was false 
+      2. Get the "imaginary decomposition" of the factor, either $x+yi$ if the choice was true or the conjugate $x-yi$ if the choice was false 
       3. Multiply the total number by this either positive or negative imaginary decomposition
 
    3. The real and imaginary part of the total number now constitute a solution for $x^2 + y^2 = n$! Amazing!!

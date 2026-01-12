@@ -7,30 +7,74 @@ from typing import Optional, Union
 from complexint import complexint
 from sympy import factorint
 
-def _euclids_algorithm(a: int, b: int, c: int) -> Optional[tuple[int, int]]:
-    """Runs Euclid's algorithm and yields remainders"""
-    first = None
-    while a != 1:
+
+def _mod_sqrt_prime(n: int, p: int) -> Optional[int]:
+    """Return x such that x*x % p == n % p, or None if no sqrt exists. p must be prime."""
+    n %= p
+    if n == 0:
+        return 0
+
+    if p == 2:
+        return n
+
+    # Legendre symbol test: residue iff n^((p-1)/2) == 1 (mod p)
+    if pow(n, (p - 1) // 2, p) != 1:
+        return None
+
+    # Fast path when p ≡ 3 (mod 4)
+    if p % 4 == 3:
+        return pow(n, (p + 1) // 4, p)
+
+    # Tonelli–Shanks
+    q = p - 1
+    s = 0
+    while q % 2 == 0:
+        s += 1
+        q //= 2
+
+    z = 2
+    while pow(z, (p - 1) // 2, p) != p - 1:
+        z += 1
+
+    m = s
+    c = pow(z, q, p)
+    t = pow(n, q, p)
+    r = pow(n, (q + 1) // 2, p)
+
+    while t != 1:
+        i = 1
+        t2i = (t * t) % p
+        while i < m and t2i != 1:
+            t2i = (t2i * t2i) % p
+            i += 1
+
+        b = pow(c, 1 << (m - i - 1), p)
+        r = (r * b) % p
+        c = (b * b) % p
+        t = (t * c) % p
+        m = i
+
+    return r
+
+
+def _euclids_algorithm(a: int, b: int, c: int) -> Optional[int]:
+    """Runs Euclid's algorithm and returns remainder"""
+    while b > c:
         r = a % b
         a, b = b, r
-        if r > c:
-            continue
-        if not r:
+        if not b:
             return None
-        if first is not None:
-            return r, first
-        first = r
 
-    raise ValueError("Euclid's algorithm failed")  # This will never be reached, for ruff
+    return b
 
 
 @cache
-def decompose_prime(p: int) -> tuple[int, int]:
+def decompose_prime(p: int, d: int = 1) -> tuple[int, int]:
     """
-    Decompose a prime number into a**2 + b**2
+    Decompose a prime number into a**2 + d * b**2
 
-    There will be at most 1 solution for primes, but only if the prime is equal 1 mod 4 according
-        to Fermat's theorem on sums of two squares.
+    There will be at most 1 solution for primes.
+        If d == 1, this will only be if the prime is equal 1 mod 4 according to Fermat's theorem on sums of two squares.
 
     This is based on the algorithm described by Stan Wagon (1990),
         based on work by Serret and Hermite (1848), and Cornacchia (1908)
@@ -41,22 +85,51 @@ def decompose_prime(p: int) -> tuple[int, int]:
     Raises:
         ValueError: If p cannot be decomposed because it is 3 mod 4
     """
-    if p % 4 != 1:
-        if p == 2:
+    if d < 1:
+        raise ValueError(f"d must be >= 1, got {d!r}")
+
+    if p == 2:
+        if d == 1:
             return 1, 1
+        if d == 2:
+            return 0, 1
 
-        raise ValueError(f'Could not decompose {p!r}')
+        raise ValueError(f"Could not decompose {p!r} with d={d!r}")
 
-    p_sqrt = math.isqrt(p)
-    for a in range(1, p):  # a must be co-prime to p
-        if pow(a, (p - 1) // 2, p) == p - 1:
-            # Found a quadratic non-residue of p! (a)
-            #   Now run the Euclidean algorithm with a and p
-            res = _euclids_algorithm(p, pow(a, (p - 1) // 4, p), p_sqrt)
-            if res:
-                return res
+    # If sqrt(-d) mod p doesn't exist, no solution for this prime
+    t = _mod_sqrt_prime((-d) % p, p)  # Note this replaces the powers in the old algorithm
+    if t is None:
+        raise ValueError(f"Could not decompose {p!r} with d={d!r}")
 
-    raise ValueError(f'Could not decompose {p!r}')
+    def _try_cornacchia_root(p: int, d: int, t: int) -> Optional[tuple[int, int]]:
+        p_sqrt = math.isqrt(p)
+
+        x = _euclids_algorithm(p, t, p_sqrt)
+        if x is None:
+            return None
+
+        rhs = p - x * x
+        if rhs < 0 or rhs % d != 0:
+            return None
+
+        y2 = rhs // d
+        y = math.isqrt(y2)
+        if y * y != y2:
+            return None
+
+        return abs(x), abs(y)
+
+    res = _try_cornacchia_root(p, d, t)
+    if res is None:
+        res = _try_cornacchia_root(p, d, (p - t) % p)
+
+    if res is None:
+        raise ValueError(f"Could not decompose {p!r} with d={d!r}")
+
+    if res[0] > res[1] and d == 1:
+        return res[1], res[0]
+
+    return res
 
 
 def decompose_number(n: Union[dict, int],

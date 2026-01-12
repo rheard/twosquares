@@ -34,12 +34,58 @@ class TestPrimeDecomposition:
     def test_high_range(self):
         """Verify large primes"""
 
+        found_one = False
         for i in primerange(2**31 + 1, 2**31 + 1001):
             if i % 4 != 1:
                 continue
 
             x, y = decompose_prime(i)
             assert i == x**2 + y**2
+            found_one = True
+
+        assert found_one
+
+    def test_examples(self):
+        """Test some verified examples"""
+        examples = {
+            19889: (17, 140),
+        }
+
+        for example_p, decomposition in examples.items():
+            assert decompose_prime(example_p) == decomposition
+
+    def test_d_examples(self):
+        """Test some verified examples of higher d values"""
+        examples = {
+            (41, 2): (3, 4),
+            (43, 2): (5, 3),
+            (19, 3): (4, 1),
+            (37, 3): (5, 2),
+            (157, 12): (7, 3),
+            (181, 12): (13, 1),
+            (2147483929, 10000): (34173, 313),
+        }
+
+        for (example_p, example_d), decomposition in examples.items():
+            assert decompose_prime(example_p, example_d) == decomposition, \
+                f"Not matching for {example_p}, {example_d}"
+
+    def test_two(self):
+        """Verify two"""
+        assert decompose_prime(2) == (1, 1)
+        assert decompose_prime(2, 2) == (0, 1)
+        with raises(ValueError, match="Could not decompose"):
+            decompose_prime(2, 3)
+
+    def test_three(self):
+        """Verify three"""
+        with raises(ValueError, match="Could not decompose"):
+            decompose_prime(3)
+        assert decompose_prime(3, 2) == (1, 1)
+        assert decompose_prime(3, 3) == (0, 1)
+        with raises(ValueError, match="Could not decompose"):
+            decompose_prime(3, 4)
+
 
 
 class TestNumberDecomposition:
@@ -58,3 +104,12 @@ class TestNumberDecomposition:
         for i in range(2**31 + 1, 2**31 + 1001):
             for x, y in decompose_number(i):
                 assert i == x**2 + y**2
+
+    def test_example(self):
+        """Test the example from my documentation"""
+        answers = decompose_number(19890)
+
+        assert len(answers) == 4
+        for x, y in answers:
+            assert 19890 == x**2 + y**2
+

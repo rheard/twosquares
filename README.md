@@ -112,3 +112,6 @@ It is possible to skip the factoring step and instead build a factored dictionar
 
 It is an interesting fact that the upper bound of solutions can be quickly computed by $\prod (j + 1)$.
     If a minimum number of solutions is required, this can be quickly validated by passing `check_count` as an integer.
+
+Note that `decompose_prime` supports an optional argument `d` where the default is `1`. 
+    This method actually is solving for the formula $p = x^2 + d * y^2$

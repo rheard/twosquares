@@ -162,7 +162,7 @@ def decompose_number(n: Union[dict, int],
         p = next(iter(factors))
         if check_count and check_count > 1:
             return set()  # There will only be 1 solution. If check_count is greater than that, do nothing
-        if p % 4 != 1:
+        if p % 4 == 3:
             return set()  # Primes == 1 mod 4 have no solutions
 
         # Return the single decomposition for this prime...

@@ -170,6 +170,9 @@ def decompose_number(n: Union[dict, int],
             return set()  # Primes == 1 mod 4 have no solutions
         if p == 0:
             return {(0, 0)}
+        if p == 2 and no_trivial_solutions:
+            # The solution for 2 is the only prime trivial solution (1, 1)
+            return set()
 
         # Return the single decomposition for this prime...
         return {decompose_prime(p)}
@@ -232,6 +235,8 @@ def decompose_number(n: Union[dict, int],
                 total *= p_exp_decompositions[p][plus_or_minus]
                 choice_i += 1
         sol: tuple[int, int] = abs(total.real), abs(total.imag)
+        if no_trivial_solutions and (sol[0] == sol[1] or sol[0] == 0 or sol[1] == 0):
+            continue
         if sol[1] < sol[0]:
             sol = (sol[1], sol[0])
         found.add(sol)

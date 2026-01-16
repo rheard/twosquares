@@ -135,9 +135,10 @@ def decompose_prime(p: int, d: int = 1) -> tuple[int, int]:
 def decompose_number(n: Union[dict, int],
                      check_count: Optional[int] = None,
                      *,
-                     limited_checks: bool = False) -> set[tuple[int, int]]:
+                     limited_checks: bool = False,
+                     no_trivial_solutions: bool = True) -> set[tuple[int, int]]:
     """
-    Decompose any number into all the possible x**2 + y**2 solutions
+    Decompose any number into all the possible x**2 + y**2 solutions.
 
     There may be many solutions.
 
@@ -148,6 +149,9 @@ def decompose_number(n: Union[dict, int],
             that number is skipped and an empty list is returned instead.
         limited_checks (bool): Only run limited checks. Should only be used with prepared input
             or false positive will appear.
+        no_trivial_solutions (bool): Exclude trivial solutions? Defined as any symmetrical solution, or any
+            solution with 0. Essentially excludes perfect squares and doubles of perfect squares.
+            Note that a value of False will make the algorithm quite a bit slower.
 
     Returns:
         set<tuple<int, int>>: All unique solutions (x, y)
@@ -177,11 +181,11 @@ def decompose_number(n: Union[dict, int],
         elif p_mod_4 == 3:
             p_3[p] = k
 
-    if not limited_checks and any(k % 2 == 1 for k in p_3.values()):
+    if (not limited_checks or no_trivial_solutions) and any(k % 2 == 1 for k in p_3.values()):
         # There is a prime == 3 mod 4 and at least one has an odd exponent, so no results
         return set()
 
-    if not p_1:
+    if not p_1 and no_trivial_solutions:
         # There aren't any primes = 1 mod 4, in which case, escape to no results
         return set()
 
@@ -201,15 +205,19 @@ def decompose_number(n: Union[dict, int],
     p_decompositions = {p: decompose_prime(p) for p in factors}
     # Here we create the a+bj and a-bj pairs...
     p_exp_decompositions = {p: (complexint(*d), complexint(d[0], -d[1])) for p, d in p_decompositions.items()}
-    first_p = next(iter(factors))
-    factors[first_p] -= 1  # subtract 1 for the base item
 
     # Add the 2's power special case to the p_3_coefficients for later...
     p_3_coefficients *= complexint(1, -1) ** two_power
 
-    # Base item only needs the positive value (a+bj) and doesn't need to vary
-    base_item = p_exp_decompositions[first_p][0]
-    base_item *= p_3_coefficients  # Add the previously calculated p_3 coefficients (including the 2's power)
+    base_item = p_3_coefficients  # Add the previously calculated p_3 coefficients (including the 2's power)
+
+    if no_trivial_solutions:
+        first_p = next(iter(factors))
+        factors[first_p] -= 1  # subtract 1 for the base item
+
+        # Base item only needs the positive value (a+bj) and doesn't need to vary
+        base_item *= p_exp_decompositions[first_p][0]
+
     found = set()
     for choices in product([0, 1], repeat=sum(factors.values())):  # This will run ONCE if repeat=0
         # Initial total for this loop with the base item

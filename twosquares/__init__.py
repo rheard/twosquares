@@ -4,7 +4,7 @@ from functools import cache
 from itertools import product
 from typing import Optional, Union
 
-from complexint import complexint
+from quadint import complexint
 from sympy import factorint
 
 

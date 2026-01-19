@@ -28,6 +28,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: Implementation :: CPython",
 ]
 keywords = ["math"]
@@ -42,7 +43,8 @@ dependencies = [
 Repository = "https://github.com/rheard/twosquares"
 
 [tool.cibuildwheel]
-build = "cp3{9,10,11,12,13}-{win,macosx,manylinux}*"
+# TODO: Android, iOS?
+build = "cp3{9,10,11,12,13,14}-{win,macosx,manylinux}*"
 
 before-test = [
     'mkdir "{project}/temp"',

@@ -25,7 +25,7 @@ def _mod_sqrt_prime(n: int, p: int) -> Optional[int]:
     if p % 4 == 3:
         return pow(n, (p + 1) // 4, p)
 
-    # Tonelli–Shanks
+    # Tonelli-Shanks
     q = p - 1
     s = 0
     while q % 2 == 0:

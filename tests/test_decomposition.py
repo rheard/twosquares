@@ -1,6 +1,11 @@
+import math
+import os
+import random
+
+from functools import cache
 from pathlib import Path
 
-from pytest import raises
+from pytest import mark, raises
 from sympy import primerange
 
 import twosquares
@@ -11,6 +16,26 @@ def test_compiled_tests():
     """Verify that we are running these tests with a compiled version of twosquares"""
     path = Path(twosquares.__file__)
     assert path.suffix.lower() != '.py'
+
+
+@cache
+def brute_force_twosquares(n: int) -> set[tuple[int, int]]:
+    """
+    Brute-force all canonical (x,y) with 0 <= x <= y and x^2 + y^2 = n.
+
+    Runs in O(isqrt(n)) time by scanning x and checking whether n - x^2 is a square.
+    """
+    if n < 0:
+        raise ValueError("n must be non-negative")
+
+    out: set[tuple[int, int]] = set()
+    lim = math.isqrt(n)
+    for x in range(lim + 1):
+        r = n - x * x
+        y = math.isqrt(r)
+        if y * y == r and x <= y:
+            out.add((x, y))
+    return out
 
 
 class TestPrimeDecomposition:
@@ -86,17 +111,40 @@ class TestPrimeDecomposition:
         with raises(ValueError, match="Could not decompose"):
             decompose_prime(3, 4)
 
+    def test_five(self):
+        """Verify five"""
+        assert decompose_prime(5) == (1, 2)
+        with raises(ValueError, match="Could not decompose"):
+            decompose_prime(5, 2)
+        with raises(ValueError, match="Could not decompose"):
+            decompose_prime(5, 3)
+        assert decompose_prime(5, 4) == (1, 1)
+        assert decompose_prime(5, 5) == (0, 1)
+
 
 
 class TestNumberDecomposition:
     """Tests for decompose_number"""
 
-    def test_numbers_below_1000(self):
+    def test_small_numbers(self):
         """Verify small numbers"""
+        max_n = 10_000 if os.getenv("CI") else 50_000
 
-        for i in range(1000):
-            for x, y in decompose_number(i):
-                assert i == x**2 + y**2
+        for n in range(1, max_n + 1):
+            got = decompose_number(n)
+            expect = {(x, y) for x, y in brute_force_twosquares(n) if x != 0 and y != 0 and x != y}
+
+            assert got == expect, f"Mismatch for n={n}: missing={expect - got}, extra={got - expect}"
+
+    def test_all_small_numbers(self):
+        """Verify all solutions for small numbers"""
+        max_n = 10_000 if os.getenv("CI") else 50_000
+
+        for n in range(1, max_n + 1):
+            got = decompose_number(n, no_trivial_solutions=False)
+            expect = brute_force_twosquares(n)
+
+            assert got == expect, f"Mismatch for n={n}: missing={expect - got}, extra={got - expect}"
 
     def test_outside_range(self):
         """Verify large numbers"""
@@ -113,3 +161,37 @@ class TestNumberDecomposition:
         for x, y in answers:
             assert 19890 == x**2 + y**2
 
+    def test_four(self):
+        """Verify four"""
+        assert decompose_number(4) == set()
+        assert decompose_number(4, no_trivial_solutions=False) == {(0, 2)}
+
+    @mark.parametrize(
+        "n",
+        [
+            # Larger hand-picked composites / squares / near-32bit boundary
+            10**6,
+            10**6 + 1,
+            999_999,
+            2**31 - 1,
+            2**31,
+            2**31 + 1,
+            2**31 + 12345,
+        ],
+    )
+    def test_all_examples(self, n: int):
+        """Validate completeness for the given examples"""
+        got = decompose_number(n, no_trivial_solutions=False)
+        expect = brute_force_twosquares(n)
+        assert got == expect, f"Mismatch for n={n}: missing={expect - got}, extra={got - expect}"
+
+    def test_fuzzed_large_numbers_match_bruteforce(self):
+        """Validate completeness for some random examples"""
+        rng = random.Random(0)
+        count = 20 if os.getenv("CI") else 200
+
+        for _ in range(count):
+            n = rng.randrange(1, 2**31 + 100_000)
+            got = decompose_number(n, no_trivial_solutions=False)
+            expect = brute_force_twosquares(n)
+            assert got == expect, f"Mismatch for n={n}: missing={expect - got}, extra={got - expect}"

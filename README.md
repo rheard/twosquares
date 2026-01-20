@@ -51,7 +51,7 @@ The first thing to know is that there is a deterministic algorithm to quickly fi
 
    3. The real and imaginary part of the total number now constitute a solution for $x^2 + y^2 = n$! Amazing!!
 
-      1. The numbers are then sorted so that $x<y$, and this is a solution that may or may not have been found already.
+      1. The numbers are then sorted so that $x < y$, and this is a solution that may or may not have been found already.
 
 Doing this we can rapidly break any number $n$ up into all of its possible $x^2 + y^2$ solutions!
 
@@ -61,7 +61,9 @@ Note: Remember how we didn't do combinatorics for a single exponent of the $p$ g
     Thus we can effectively halve the compute time with the combinatorics by excluding the other half of that particular exponent.
 
 Note: That is not entirely true, as skipping all of the combinatorics with this number and 2 means we will not
-    get back trivial solutions.
+    get back all trivial solutions. 
+To get all trivial solutions with this package, pass the argument `no_trivial_solutions=True` to `decompose_number`.
+
 ### Example
 
 As an example, lets look at $n = 19890$. 

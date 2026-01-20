@@ -4,7 +4,7 @@ from functools import cache
 from itertools import product
 from typing import Optional, Union
 
-from quadint import complexint
+from quadint.complex import complexint
 from sympy import factorint
 
 def _mod_sqrt_prime(n: int, p: int) -> Optional[int]:

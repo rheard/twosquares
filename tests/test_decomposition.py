@@ -24,10 +24,10 @@ def brute_force_twosquares(n: int) -> set[tuple[int, int]]:
     Brute-force all canonical (x,y) with 0 <= x <= y and x^2 + y^2 = n.
 
     Runs in O(isqrt(n)) time by scanning x and checking whether n - x^2 is a square.
-    """
-    if n < 0:
-        raise ValueError("n must be non-negative")
 
+    Returns:
+        set: The solutions found to n = x**2 + y**2
+    """
     out: set[tuple[int, int]] = set()
     lim = math.isqrt(n)
     for x in range(lim + 1):
@@ -122,7 +122,6 @@ class TestPrimeDecomposition:
         assert decompose_prime(5, 5) == (0, 1)
 
 
-
 class TestNumberDecomposition:
     """Tests for decompose_number"""
 
@@ -159,7 +158,7 @@ class TestNumberDecomposition:
 
         assert len(answers) == 4
         for x, y in answers:
-            assert 19890 == x**2 + y**2
+            assert x**2 + y**2 == 19890
 
     def test_four(self):
         """Verify four"""

@@ -8,12 +8,12 @@ requires = [
     # TODO: Sympy began adding mypy type-hints and removed the py.typed file.
     #   It is actively being worked on, see https://github.com/sympy/sympy/issues/17945
     "sympy<=1.12.1",
-    "quadint>=0.0.8",
+    "quadint>=0.0.9",
 ]
 
 [project]
 name = "twosquares"
-version = "0.0.4"
+version = "0.0.5"
 dynamic = ["license"]
 authors = [
   { name="Ryan Heard", email="ryanwheard@gmail.com" },
@@ -37,7 +37,7 @@ dependencies = [
     # TODO: Sympy began adding mypy type-hints and removed the py.typed file.
     #   It is actively being worked on, see https://github.com/sympy/sympy/issues/17945
     "sympy<=1.12.1",
-    "quadint>=0.0.8",
+    "quadint>=0.0.9",
 ]
 
 [project.urls]

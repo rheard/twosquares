@@ -1,8 +1,8 @@
 import math
 
-from functools import cache
+from functools import lru_cache
 from itertools import product
-from typing import Optional, Union
+from typing import Dict, Optional, Set, Tuple, Union
 
 from quadint import complexint
 from sympy import factorint
@@ -67,8 +67,8 @@ def _euclids_algorithm(a: int, b: int, c: int) -> Optional[int]:
     return b
 
 
-@cache
-def decompose_prime(p: int, d: int = 1) -> tuple[int, int]:
+@lru_cache(None)
+def decompose_prime(p: int, d: int = 1) -> Tuple[int, int]:
     """
     Decompose a prime number into a**2 + d * b**2
 
@@ -100,7 +100,7 @@ def decompose_prime(p: int, d: int = 1) -> tuple[int, int]:
     if t is None:
         raise ValueError(f"Could not decompose {p!r} with d={d!r}")
 
-    def _try_cornacchia_root(p: int, d: int, t: int) -> Optional[tuple[int, int]]:
+    def _try_cornacchia_root(p: int, d: int, t: int) -> Optional[Tuple[int, int]]:
         p_sqrt = math.isqrt(p)
 
         x = _euclids_algorithm(p, t, p_sqrt)
@@ -135,7 +135,7 @@ def decompose_number(n: Union[dict, int],
                      check_count: Optional[int] = None,
                      *,
                      limited_checks: bool = False,
-                     no_trivial_solutions: bool = True) -> set[tuple[int, int]]:
+                     no_trivial_solutions: bool = True) -> Set[Tuple[int, int]]:
     """
     Decompose any number into all the possible x**2 + y**2 solutions.
 
@@ -157,7 +157,7 @@ def decompose_number(n: Union[dict, int],
     """
 
     # Step 1: Factor n. This is the most time consuming step, especially on larger numbers. Avoid if possible
-    factors: dict[int, int] = n if isinstance(n, dict) else factorint(n)
+    factors: Dict[int, int] = n if isinstance(n, dict) else factorint(n)
 
     # Look for shortcuts
     if len(factors) == 1 and sum(factors.values()) == 1:
@@ -233,7 +233,7 @@ def decompose_number(n: Union[dict, int],
                 plus_or_minus = choices[choice_i]
                 total *= p_exp_decompositions[p][plus_or_minus]
                 choice_i += 1
-        sol: tuple[int, int] = abs(total.real), abs(total.imag)
+        sol: Tuple[int, int] = abs(total.real), abs(total.imag)
         if no_trivial_solutions and (sol[0] == sol[1] or sol[0] == 0 or sol[1] == 0):
             continue
         if sol[1] < sol[0]:

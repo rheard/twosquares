@@ -211,7 +211,7 @@ def decompose_number(n: Union[dict, int],
     p_exp_decompositions = {p: (complexint(*d), complexint(d[0], -d[1])) for p, d in p_decompositions.items()}
 
     # Add the 2's power special case to the p_3_coefficients for later...
-    p_3_coefficients *= complexint(1, -1) ** two_power
+    p_3_coefficients *= complexint(1, 1) ** two_power
 
     base_item = p_3_coefficients  # Add the previously calculated p_3 coefficients (including the 2's power)
 

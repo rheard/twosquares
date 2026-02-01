@@ -244,21 +244,48 @@ def decompose_number(n: Union[dict, int],
         # Base item only needs the positive value (a+bj) and doesn't need to vary
         base_item *= p_exp_decompositions[first_p][0]
 
-    found = set()
-    for choices in product([0, 1], repeat=sum(factors.values())):  # This will run ONCE if repeat=0
-        # Initial total for this loop with the base item
+    found: set[tuple[int, int]] = set()
+
+    # Precompute, for each p^k, the (k+1) distinct mixed factors:
+    # mix[t] = (a+bj)^t * (a-bj)^(k-t)
+    mixes_list: list[tuple[complexint, ...]] = []
+    choice_ranges = []
+
+    one = complexint(1, 0)
+
+    for p, k in factors.items():
+        choice_ranges.append(range(k + 1))
+
+        if k <= 0:
+            mixes_list.append((one,))
+            continue
+
+        plus, minus = p_exp_decompositions[p]
+
+        # Precompute minus powers only once, then walk plus powers incrementally.
+        minus_pows = [one]
+        for _ in range(k):
+            minus_pows.append(minus_pows[-1] * minus)
+
+        mixes: list[complexint] = []
+        plus_pow = one
+        for t in range(k + 1):
+            mixes.append(plus_pow * minus_pows[k - t])
+            plus_pow *= plus
+
+        mixes_list.append(tuple(mixes))
+
+    for choices in product(*choice_ranges):  # This will run ONCE if choice_ranges is empty
         total = base_item
-        choice_i = 0
-        for p, k in factors.items():
-            # Get a choice for each factor, on whether to use (a+bj) or (a-bj) here...
-            for _ in range(k):
-                plus_or_minus = choices[choice_i]
-                total *= p_exp_decompositions[p][plus_or_minus]
-                choice_i += 1
+        for x in zip(choices, mixes_list):
+            t = x[0]
+            total *= x[1][t]
+
         sol: tuple[int, int] = abs(total.real), abs(total.imag)
         if no_trivial_solutions and (sol[0] == sol[1] or sol[0] == 0 or sol[1] == 0):
             continue
         if sol[1] < sol[0]:
             sol = (sol[1], sol[0])
         found.add(sol)
+
     return found

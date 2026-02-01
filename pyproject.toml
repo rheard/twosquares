@@ -16,6 +16,7 @@ requires = [
 name = "twosquares"
 version = "0.0.5"
 dynamic = ["license"]
+version = "0.0.6"
 authors = [
   { name="Ryan Heard", email="ryanwheard@gmail.com" },
 ]

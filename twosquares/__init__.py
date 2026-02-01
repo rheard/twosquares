@@ -4,8 +4,8 @@ from functools import cache
 from itertools import product
 from typing import Optional, Union
 
-from sympy import factorint as sympy_factorint
 from quadint import complexint
+from sympy import factorint as sympy_factorint
 
 try:
     from cypari import pari
@@ -17,6 +17,7 @@ except ImportError:
 
 
 def factorint(n: int) -> dict[int, int]:
+    """A wrapper for sympy's factorint unless pari is available"""
     if CYPARI:
         # PARI returns a matrix: [p1 e1; p2 e2; ...]
         f = pari(n).factor()
@@ -25,8 +26,7 @@ def factorint(n: int) -> dict[int, int]:
         return {
             int(p): int(e) for p, e in zip(f[0], f[1])
         }
-    else:
-        return sympy_factorint(n)
+    return sympy_factorint(n)
 
 
 def _mod_sqrt_prime(n: int, p: int) -> Optional[int]:

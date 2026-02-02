@@ -8,7 +8,6 @@ requires = [
     # TODO: Sympy began adding mypy type-hints and removed the py.typed file.
     #   It is actively being worked on, see https://github.com/sympy/sympy/issues/17945
     "sympy<=1.12.1",
-    "cypari",
     "quadint>=0.0.9",
 ]
 
@@ -40,17 +39,8 @@ dependencies = [
     "quadint>=0.0.9",
 ]
 
-[project.optional-dependencies]
-cypari = [
-  "cypari",
-]
-
 [project.urls]
 Repository = "https://github.com/rheard/twosquares"
-
-[[tool.mypy.overrides]]
-module = ["cypari.*"]
-follow_untyped_imports = true
 
 [tool.cibuildwheel]
 # TODO: Android, iOS?

@@ -5,28 +5,7 @@ from itertools import product
 from typing import Optional, Union
 
 from quadint import complexint
-from sympy import factorint as sympy_factorint
-
-try:
-    from cypari import pari
-
-    CYPARI = True
-except ImportError:
-    pari = None
-    CYPARI = False
-
-
-def factorint(n: int) -> dict[int, int]:
-    """A wrapper for sympy's factorint unless pari is available"""
-    if CYPARI:
-        # PARI returns a matrix: [p1 e1; p2 e2; ...]
-        f = pari(n).factor()
-
-        # Convert to Python dict[int, int]
-        return {
-            int(p): int(e) for p, e in zip(f[0], f[1])
-        }
-    return sympy_factorint(n)
+from sympy import factorint
 
 
 def _mod_sqrt_prime(n: int, p: int) -> Optional[int]:

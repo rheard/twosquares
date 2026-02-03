@@ -7,7 +7,6 @@ from typing import Optional, Union
 from quadint import complexint
 from sympy import factorint
 
-
 def _mod_sqrt_prime(n: int, p: int) -> Optional[int]:
     """Return x such that x*x % p == n % p, or None if no sqrt exists. p must be prime."""
     n %= p

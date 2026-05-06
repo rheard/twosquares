@@ -1,13 +1,19 @@
+from __future__ import annotations
+
 import math
+import warnings
 
 from functools import cache
 from itertools import product
-from typing import Optional, Union
 
 from quadint import complexint
 from sympy import factorint
 
-def _mod_sqrt_prime(n: int, p: int) -> Optional[int]:
+warnings.warn("twosquares has been deprecated. Please use quadint instead.",
+              DeprecationWarning, stacklevel=2)
+
+
+def _mod_sqrt_prime(n: int, p: int) -> int | None:
     """Return x such that x*x % p == n % p, or None if no sqrt exists. p must be prime."""
     n %= p
     if n == 0:
@@ -56,7 +62,7 @@ def _mod_sqrt_prime(n: int, p: int) -> Optional[int]:
     return r
 
 
-def _euclids_algorithm(a: int, b: int, c: int) -> Optional[int]:
+def _euclids_algorithm(a: int, b: int, c: int) -> int | None:
     """Runs Euclid's algorithm and returns remainder"""
     while b > c:
         r = a % b
@@ -100,7 +106,7 @@ def decompose_prime(p: int, d: int = 1) -> tuple[int, int]:
     if t is None:
         raise ValueError(f"Could not decompose {p!r} with d={d!r}")
 
-    def _try_cornacchia_root(p: int, d: int, t: int) -> Optional[tuple[int, int]]:
+    def _try_cornacchia_root(p: int, d: int, t: int) -> tuple[int, int] | None:
         p_sqrt = math.isqrt(p)
 
         x = _euclids_algorithm(p, t, p_sqrt)
@@ -131,8 +137,8 @@ def decompose_prime(p: int, d: int = 1) -> tuple[int, int]:
     return res
 
 
-def decompose_number(n: Union[dict, int],
-                     check_count: Optional[int] = None,
+def decompose_number(n: dict | int,
+                     check_count: int | None = None,
                      *,
                      limited_checks: bool = False,
                      no_trivial_solutions: bool = True) -> set[tuple[int, int]]:
